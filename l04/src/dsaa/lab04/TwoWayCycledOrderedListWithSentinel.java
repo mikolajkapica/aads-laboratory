@@ -34,6 +34,7 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
             this.prev.next = this.next;
             this.next.prev = this.prev;
         }
+        @SuppressWarnings("unchecked")
         public int compareTo(Element element) {
             return ((Comparable<E>)this.object).compareTo(element.object);
         }
@@ -148,14 +149,6 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
             actElem = actElem.next;
 
         }
-        if (actElem == sentinel) {
-            // if the element is not found, add it to the end
-            Element newElem = new Element(e, sentinel, sentinel.prev);
-            sentinel.prev.next = newElem;
-            sentinel.prev = newElem;
-            size++;
-            return true;
-        }
         // if the element is found, add it before it
         Element newElem = new Element(e, actElem, actElem.prev);
         actElem.prev.next = newElem;
@@ -262,26 +255,11 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
     @Override
     public E remove(int index) {
         if (index < 0 || index > size - 1) throw new NoSuchElementException();
-        // if index is 0, remove the head
-        if (index == 0) {
-            Element toBeRemoved = sentinel.next;
-            if (toBeRemoved == null) throw new NoSuchElementException();
-            sentinel.next = toBeRemoved.next;
-            toBeRemoved.next.prev = sentinel;
-            size--;
-            return toBeRemoved.object;
-        }
-
-        // otherwise, get the element before the index
-        Element beforeToBeRemoved = getElement(index - 1);
-
-        // the next element will be removed
-        Element toBeRemoved = beforeToBeRemoved.next;
-
-        beforeToBeRemoved.next = toBeRemoved.next;
-        toBeRemoved.next.prev = beforeToBeRemoved;
+        Element elementToDelete = getElement(index);
+        elementToDelete.prev.next = elementToDelete.next;
+        elementToDelete.next.prev = elementToDelete.prev;
         size--;
-        return toBeRemoved.object;
+        return elementToDelete.object;
     }
 
     @Override
@@ -291,14 +269,6 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
 
         // start with first element
         Element actElem = sentinel.next;
-
-        // if the first element is the element to be removed, set the new head and return true
-        if (actElem.object.equals(e)) {
-            actElem.next.prev = sentinel;
-            sentinel.next = actElem.next;
-            size--;
-            return true;
-        }
 
         // go through the list until the element is found or the end of the list is reached
         while (actElem != sentinel && !actElem.object.equals(e)) {
@@ -321,7 +291,7 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
         return size;
     }
 
-    //@SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     public void add(TwoWayCycledOrderedListWithSentinel<E> other) {
         if (other == null) return;
         if (other == this) return;
@@ -349,18 +319,12 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>{
         }
         if (thisActElem == sentinel) {
             thisActElem = thisActElem.prev;
-            while (otherActElem != other.sentinel) {
-                Element otherActElemNext = otherActElem.next;
-                otherActElem.prev.next = otherActElem.next;
-                otherActElem.next.prev = otherActElem.prev;
-                thisActElem.next = otherActElem;
-                otherActElem.prev = thisActElem;
-                otherActElem.next = sentinel;
-                this.size++;
-                other.size--;
-                thisActElem = thisActElem.next;
-                otherActElem = otherActElemNext;
-            }
+            thisActElem.next = other.sentinel.next;
+            other.sentinel.next.prev = thisActElem;
+            other.sentinel.prev.next = sentinel;
+            sentinel.prev = other.sentinel.prev;
+            this.size += other.size;
+            other.clear();
         }
     }
 
