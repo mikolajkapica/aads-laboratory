@@ -19,3 +19,4 @@ public interface IList<E> extends Iterable<E> {
     boolean remove(E e); // remove element
     int size();
 }
+

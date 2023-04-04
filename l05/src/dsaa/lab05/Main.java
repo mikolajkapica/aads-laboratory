@@ -1,17 +1,9 @@
 package dsaa.lab05;
-
 import java.util.*;
 
+
 public class Main {
-
-
-
-
     static Scanner scan; // for input stream
-
-
-
-
 
     public static void main(String[] args) {
         System.out.println("START");
@@ -74,7 +66,11 @@ public class Main {
             }
             // add str
             if(word[0].equalsIgnoreCase("add") && word.length==2) {
-                System.out.println(doc[currentDocNo].link.add(new Link(word[1])));
+                Link link=Document.createLink(word[1].toLowerCase());
+                if(link==null)
+                    System.out.println("error");
+                else
+                    System.out.println(doc[currentDocNo].link.add(link));
                 continue;
             }
             // addi index str
@@ -144,6 +140,20 @@ public class Main {
             if(word[0].equalsIgnoreCase("addl") && word.length==2) {
                 int number=Integer.parseInt(word[1]);
                 doc[currentDocNo].link.add(doc[number].link);
+                continue;
+            }
+            if(word[0].equalsIgnoreCase("bubblesort") && word.length==1) {
+                doc[currentDocNo].bubbleSort(doc[currentDocNo].getWeights());
+                continue;
+            }
+
+            if(word[0].equalsIgnoreCase("insertsort") && word.length==1) {
+                doc[currentDocNo].insertSort(doc[currentDocNo].getWeights());
+                continue;
+            }
+
+            if(word[0].equalsIgnoreCase("selectsort") && word.length==1) {
+                doc[currentDocNo].selectSort(doc[currentDocNo].getWeights());
                 continue;
             }
             System.out.println("Wrong command");

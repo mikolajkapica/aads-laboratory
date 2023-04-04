@@ -2,6 +2,7 @@ package dsaa.lab05;
 
 import java.util.ListIterator;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Document{
     public String name;
@@ -12,96 +13,42 @@ public class Document{
         load(scan);
     }
     public void load(Scanner scan) {
-        String line;
-        while (!(line = scan.nextLine()).equals("eod")) {
-            char[] fiveLast = new char[5];
-            for (int i = 0; i < line.length(); i++) {
-                // shift array
-                fiveLast[0] = fiveLast[1];
-                fiveLast[1] = fiveLast[2];
-                fiveLast[2] = fiveLast[3];
-                fiveLast[3] = fiveLast[4];
-                // add new char
-                fiveLast[4] = line.charAt(i);
-                String fiveLastString = new String(fiveLast);
-                // check if link is found
-                if (fiveLastString.equalsIgnoreCase("link=")) {
-                    StringBuilder sb = new StringBuilder();
-                    i += 1;
-                    // add all chars until whitespace
-                    while(i < line.length() && !Character.isWhitespace(line.charAt(i)) && line.charAt(i) != '(') {
-                        sb.append(line.charAt(i));
-                        i++;
-                    }
-                    int weight = -1;
-                    if (i < line.length() && line.charAt(i) == '(') {
-                        StringBuilder weightSB = new StringBuilder();
-                        i++;
-
-                        while (i < line.length() && Character.isDigit(line.charAt(i))) {
-                            weightSB.append(line.charAt(i));
-                            i++;
-                        }
-                        if (line.charAt(i) != ')') {
-                            weight = -2;
-                        }
-                        if (line.charAt(i) == ')') {
-                            String weightString = weightSB.toString();
-                            if (weightString.length() == 0) {
-                                weight = -2;
-                            }
-                            else if (weightString.length() > 0 && isOnlyDigits(weightString)) {
-                                weight = Integer.parseInt(weightString);
-                            }
-                        }
-                    }
-                    // check if link is correct and print it
-                    String linkString = sb.toString();
-                    if (correctLink(linkString)) {
-                        linkString = linkString.toLowerCase();
-                        if (weight == -1) {
-                            link.add(createLink(linkString));
-                        } else if (weight >= 0)
-                            link.add(createLink(linkString, weight));
-                        }
+        while (scan.hasNextLine()) {
+            String line = scan.nextLine();
+            if (line.length() == 0) continue;
+            if (line.equalsIgnoreCase("eod")) break;
+            String[] splittedLine = line.split("\\s+");
+            for (String s : splittedLine) {
+                if (s.toLowerCase().startsWith("link=")) {
+                    Link linkTyped = createLink(s.substring(5).toLowerCase());
+                    if (linkTyped != null) {
+                        this.link.add(linkTyped);
                     }
                 }
             }
         }
-    private boolean isOnlyDigits(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isDigit(s.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isCorrectId(String id) {
-        if (!Character.isLetter(id.charAt(0))) return false;
-        return true;
     }
 
     // accepted only small letters, capitalic letter, digits nad '_' (but not on the begin)
     private static boolean correctLink(String link) {
-        // link is empty or starts with not a letter
-        if (link.length() == 0 || !Character.isLetter(link.charAt(0))) {
-            return false;
-        }
-        // check if link contains only letters, digits and '_'
-        for (int i = 0; i < link.length(); i++) {
-            boolean validCondition = Character.isLetterOrDigit(link.charAt(i)) || link.charAt(i) == '_';
-            if (!validCondition) {
-                return false;
-            }
-        }
-        return true;
+        Pattern pattern = Pattern.compile("[a-zA-Z]\\w*(\\(\\d+\\))?");
+        return pattern.matcher(link).matches();
     }
-    private static Link createLink(String link) {
-        return new Link(link);
+
+    public static Link createLink(String linkTyped) {
+        if (!correctLink(linkTyped)) return null;
+        if (linkTyped.charAt(linkTyped.length()-1) == ')') {
+            String[] split = linkTyped.split("\\(");
+            String linkName = split[0];
+            int weight = Integer.parseInt(split[1].substring(0, split[1].length()-1));
+            return new Link(linkName, weight);
+        } else {
+            return new Link(linkTyped);
+        }
     }
-    private static Link createLink(String link, int weight) {
-        return new Link(link, weight);
+
+    public static boolean isCorrectId(String id) {
+        return Character.isLetter(id.charAt(0));
     }
 
     @Override
@@ -140,4 +87,66 @@ public class Document{
         }
         return sb.substring(0, sb.length()-1);
     }
+    public int[] getWeights() {
+        int[] retArr=new int[link.size];
+        ListIterator<Link> iter = link.listIterator();
+        int i=0;
+        while(iter.hasNext()) {
+            retArr[i]=iter.next().weight;
+            i++;
+        }
+        return retArr;
+    }
+
+    public static void showArray(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+
+    void bubbleSort(int[] arr) {
+        showArray(arr);
+        for (int i = 0; i < arr.length-1; i++) {
+            for (int j = arr.length-1; j > i; j--) {
+                if (arr[j-1] > arr[j]) {
+                    swap(arr, j - 1, j);
+                }
+            }
+            showArray(arr);
+        }
+    }
+
+    public void insertSort(int[] arr) {
+        showArray(arr);
+        for (int i = arr.length-2; i >= 0; i--) {
+            int j = i;
+            while (j < arr.length-1 && arr[j] > arr[j + 1]) {
+                swap(arr, j, j + 1);
+                j++;
+            }
+            showArray(arr);
+        }
+    }
+
+    private void swap(int[] arr, int pos1, int pos2) {
+        int temp = arr[pos1];
+        arr[pos1] = arr[pos2];
+        arr[pos2] = temp;
+    }
+
+    public void selectSort(int[] arr) {
+        showArray(arr);
+        for (int i = arr.length-1; i > 0; i--) {
+            int maxValuePosition = i;
+            for (int j = 0; j < i; j++) {
+                if (arr[j] > arr[maxValuePosition]) {
+                    maxValuePosition = j;
+                }
+            }
+            swap(arr, i, maxValuePosition);
+            showArray(arr);
+        }
+    }
+
 }
