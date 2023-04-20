@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/aads-laboratory.iml" filepath="$PROJECT_DIR$/.idea/aads-laboratory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l01/l01.iml" filepath="$PROJECT_DIR$/l01/l01.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l02/l02.iml" filepath="$PROJECT_DIR$/l02/l02.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l03/l03.iml" filepath="$PROJECT_DIR$/l03/l03.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l04/l04.iml" filepath="$PROJECT_DIR$/l04/l04.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l05/l05.iml" filepath="$PROJECT_DIR$/l05/l05.iml" />
+      <module fileurl="file://$PROJECT_DIR$/l06/l06.iml" filepath="$PROJECT_DIR$/l06/l06.iml" />
+    </modules>
+  </component>
+</project>

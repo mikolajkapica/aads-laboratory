@@ -1,5 +1,6 @@
 package dsaa.lab06;
 
+import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -150,115 +151,110 @@ public class Document{
     }
 
     public void iterativeMergeSort(int[] arr) {
-		showArray(arr);
-
+        showArray(arr);
         int n = arr.length;
 
-        // Merge subarrays in bottom-up manner.
-        // First merge subarrays of size 1 to create
-        // sorted subarrays of size 2, then merge
-        // subarrays of size 2 to create sorted
-        // subarrays of size 4, and so on.
+        // creating arrays of current size, 1, 2, 4...
         for (int curr_size = 1; curr_size <= n-1; curr_size = 2*curr_size) {
-            // Pick starting point of different subarrays of current size
+            // starting point of left subarray
             for (int left_start = 0; left_start < n-1; left_start += 2*curr_size) {
                 // Find ending point of left subarray
                 int mid = Math.min(left_start + curr_size - 1, n-1);
-    
                 // Find ending point of right subarray
                 int right_end = Math.min(left_start + 2*curr_size - 1, n-1);
-    
                 // Merge left and right subarrays
                 merge(arr, left_start, mid, right_end);
             }
             showArray(arr);
         }
-	}
+    }
 
-    public static void merge(int arr[], int left, int mid, int right) {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-    
-        // Create temp arrays
-        int L[] = new int[n1];
-        int R[] = new int[n2];
-    
-        // Copy data to temp arrays L[] and R[]
-        for (int i = 0; i < n1; i++)
-            L[i] = arr[left + i];
-        for (int j = 0; j < n2; j++)
-            R[j] = arr[mid + 1 + j];
-    
+    public static void merge(int[] arr, int left, int mid, int right) {
+        int sizeLeft = mid - left + 1;
+        int[] L = new int[sizeLeft];
+        System.arraycopy(arr, left, L, 0, sizeLeft);
+
+        int sizeRight = right - mid;
+        int[] R = new int[sizeRight];
+        System.arraycopy(arr, mid + 1, R, 0, sizeRight);
+
         // Merge the temp arrays back into arr[left..right]
-        int i = 0; // Initial index of left subarray
-        int j = 0; // Initial index of right subarray
-        int k = left; // Initial index of merged subarray
-        while (i < n1 && j < n2) {
+
+        // Initial index of left subarray
+        int i = 0;
+        // Initial index of right subarray
+        int j = 0;
+        // Initial index of merged subarray
+        int k = left;
+
+        while (i < sizeLeft && j < sizeRight) {
             if (L[i] <= R[j]) {
                 arr[k] = L[i];
                 i++;
-            }
-            else {
+            } else {
                 arr[k] = R[j];
                 j++;
             }
             k++;
         }
-    
-        // Copy the remaining elements of L[], if there are any
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
+
+        // Copy if there are any left in L
+        while (i < sizeLeft) {
+            arr[k++] = L[i++];
         }
-    
-        // Copy the remaining elements of R[], if there are any
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
+
+        // Copy if there are any left in R
+        while (j < sizeRight) {
+            arr[k++] = R[j++];
         }
     }
-    
 
-	public void radixSort(int[] arr) {
-		showArray(arr);
-		int n = arr.length;
+    public void radixSort(int[] arr) {
+        showArray(arr);
         int max = 999;
-
         // Do counting sort for each digit place
-        for (int digitPlace = 1; max/digitPlace > 0; digitPlace *= 10) {
-            countingSort(arr, n, digitPlace);
+        for (int digitPlace = 1; digitPlace <= max; digitPlace *= 10) {
+            countingSort(arr, digitPlace);
             showArray(arr);
         }
-	}
-    
-    public static void countingSort(int arr[], int n, int digitPlace) {
-        int output[] = new int[n];
-        int count[] = new int[10];
-    
-        // Store count of occurrences in count[]
+    }
+
+    public static void countingSort(int[] arr, int digitPlace) {
+        int n = arr.length;
+        int[] output = new int[n];
+        int[] count = new int[10];
+
+        // Check what are the digits at the current digit place
+        // (124/1) % 10 = 4, (124 / 10) % 10 = 2, (124 / 100) % 10 = 1
         for (int i = 0; i < n; i++) {
             int digit = (arr[i] / digitPlace) % 10;
             count[digit]++;
         }
-    
-        // Modify count[] so that it contains actual position of this digit in output[]
+
+        // Set count to be the index of the last element in the output array
+        // if count looks like
+        // 0 4 2 5 1
+        // then it will be
+        // -1 3 5 10 11
+        count[0]--;
         for (int i = 1; i < 10; i++) {
             count[i] += count[i-1];
         }
-    
+
         // Build the output array
+        // from the last element to the first element because we want to keep the order of the elements with the same digit
+        // to be stable,
+        // for example: 724, 824, 924
+        // we put it back: 724, 824, 924
+        // and not: 924, 824, 724
         for (int i = n-1; i >= 0; i--) {
             int digit = (arr[i] / digitPlace) % 10;
-            output[count[digit] - 1] = arr[i];
+            output[count[digit]] = arr[i];
             count[digit]--;
         }
-    
-        // Copy the output array to arr[], so that arr[] now contains sorted numbers according to current digit place
-        for (int i = 0; i < n; i++) {
-            arr[i] = output[i];
-        }
+
+        // copy the output array to the input array
+        System.arraycopy(output, 0, arr, 0, n);
     }
 
 }
