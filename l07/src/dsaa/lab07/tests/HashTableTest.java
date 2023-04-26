@@ -17,4 +17,10 @@ public class HashTableTest {
         Document secon = new Document("secon");
         assertEquals(2, hashTable.hashFunctionDocPlace(secon.hashCode()));
     }
+//    @Test
+//    public void doubleArrayTest() {
+//        HashTable hashTable = new HashTable(10);
+//        hashTable.doubleArray();
+//        assertEquals(20, hashTable.arr.length);
+//    }
 }

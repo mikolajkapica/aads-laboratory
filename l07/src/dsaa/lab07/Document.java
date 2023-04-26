@@ -268,13 +268,14 @@ public class Document implements IWithName {
 
     @Override
     public int hashCode() {
+        int MODVALUE=100000000;
         int[] numbers = {7,11,13,17,19};
         int numbersLength = numbers.length;
         int nameLength = name.length();
         int hash = name.charAt(0);
         for (int i = 0; i < nameLength - 1; i++) {
-            hash *= numbers[i % numbersLength];
-            hash += name.charAt(i + 1);
+            hash *= numbers[i % numbersLength] % MODVALUE;
+            hash += name.charAt(i + 1) % MODVALUE;
         }
         return hash;
     }

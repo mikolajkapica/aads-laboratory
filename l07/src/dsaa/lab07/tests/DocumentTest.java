@@ -10,7 +10,9 @@ public class DocumentTest {
 
     @Test
     public void testHashCode() {
-        String str = "abcd";
+        String str = "xxx";
+        assertEquals(10680, new Document(str).hashCode());
+        str = "abcd";
         assertEquals(112498, new Document(str).hashCode());
     }
 }

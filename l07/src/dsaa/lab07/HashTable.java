@@ -24,16 +24,11 @@ public class HashTable {
 		for (int i = 0; i < arr.length; i++) {
 			arr[i] = new LinkedList();
 		}
-		size = initCapacity;
+		size = 0;
 	}
 
-	public int hashFunctionDocPlace(int x) {
-		int MODVALUE = 100000000;
-		int hash = x;
-		hash = (hash / 100) % MODVALUE;
-		hash = (hash * 6) % MODVALUE;
-		hash = (hash + x) % MODVALUE;
-		return hash % (arr.length);
+	public int hashFunctionDocPlace(Object elem) {
+		return ((Document)elem).hashCode() % (arr.length);
 	}
 
 	public boolean add(Object elem) {
@@ -41,24 +36,31 @@ public class HashTable {
 		if (get(elem) != null) {
 			return false;
 		}
-		int hash = hashFunctionDocPlace(elem.hashCode());
-		if (((float)(size + 1))/(float)arr.length > maxLoadFactor) {
-			doubleArray();
-			hash = hashFunctionDocPlace(elem.hashCode());
-		}
-		arr[hash].add(elem);
 		size++;
+		if (((float)(size))/(float)arr.length > maxLoadFactor) {
+			doubleArray();
+		}
+		int hash = hashFunctionDocPlace(elem);
+		arr[hash].add(elem);
 		return true;
 	}
 
 
-	private void doubleArray() {
-		LinkedList[] newArr = new LinkedList[arr.length * 2];
+	public void doubleArray() {
+		// store old array
+		LinkedList[] oldArr = arr;
+		// make it twice as big
+		arr = new LinkedList[oldArr.length * 2];
+		// initialize it
 		for (int i = 0; i < arr.length; i++) {
-			newArr[i] = arr[i];
+			arr[i] = new LinkedList();
 		}
-		for (int i = arr.length; i < newArr.length; i++) {
-			newArr[i] = new LinkedList();
+		// rehash all elements
+		for (int i = 0; i < oldArr.length; i++) {
+			for (int j = 0; j < oldArr[i].size(); j++) {
+				int hash = hashFunctionDocPlace(oldArr[i].get(j));
+				arr[hash].add(oldArr[i].get(j));
+			}
 		}
 	}
 
@@ -68,12 +70,14 @@ public class HashTable {
 		// use	IWithName x=(IWithName)elem;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
-			sb.append(i).append(": ");
+			sb.append(i).append(":");
 			if (!arr[i].isEmpty()) {
+				sb.append(" ");
 				for (int j = 0; j < arr[i].size(); j++) {
 					IWithName x = (IWithName) arr[i].get(j);
-					sb.append(x.getName()).append(" ");
+					sb.append(x.getName()).append(", ");
 				}
+				sb.deleteCharAt(sb.length() - 1);
 				sb.deleteCharAt(sb.length() - 1);
 			}
 			sb.append("\n");
@@ -83,7 +87,7 @@ public class HashTable {
 
 	public Object get(Object toFind) {
 		Document _toFind = (Document) toFind;
-		int hash = hashFunctionDocPlace(_toFind.hashCode());
+		int hash = hashFunctionDocPlace(_toFind);
 		for (Object d : arr[hash]) {
 			Document _d = (Document) d;
 			if (_d.equals(_toFind)) {
