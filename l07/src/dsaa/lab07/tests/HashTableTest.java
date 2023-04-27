@@ -15,12 +15,6 @@ public class HashTableTest {
     public void hashFunctionDocPlaceTest() {
         HashTable hashTable = new HashTable(10);
         Document secon = new Document("secon");
-        assertEquals(2, hashTable.hashFunctionDocPlace(secon.hashCode()));
+        assertEquals(2, hashTable.hashFunctionDocPlace(secon));
     }
-//    @Test
-//    public void doubleArrayTest() {
-//        HashTable hashTable = new HashTable(10);
-//        hashTable.doubleArray();
-//        assertEquals(20, hashTable.arr.length);
-//    }
 }

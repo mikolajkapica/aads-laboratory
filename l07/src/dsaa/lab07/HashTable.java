@@ -28,7 +28,7 @@ public class HashTable {
 	}
 
 	public int hashFunctionDocPlace(Object elem) {
-		return ((Document)elem).hashCode() % (arr.length);
+		return elem.hashCode() % arr.length;
 	}
 
 	public boolean add(Object elem) {
@@ -37,7 +37,7 @@ public class HashTable {
 			return false;
 		}
 		size++;
-		if (((float)(size))/(float)arr.length > maxLoadFactor) {
+		if (((float)size) / ((float)arr.length) >= maxLoadFactor) {
 			doubleArray();
 		}
 		int hash = hashFunctionDocPlace(elem);
@@ -86,11 +86,9 @@ public class HashTable {
 	}
 
 	public Object get(Object toFind) {
-		Document _toFind = (Document) toFind;
-		int hash = hashFunctionDocPlace(_toFind);
+		int hash = hashFunctionDocPlace(toFind);
 		for (Object d : arr[hash]) {
-			Document _d = (Document) d;
-			if (_d.equals(_toFind)) {
+			if (d.equals(toFind)) {
 				return d;
 			}
 		}

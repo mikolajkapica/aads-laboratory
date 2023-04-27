@@ -54,7 +54,12 @@ public class Document implements IWithName {
     }
 
     public static boolean isCorrectId(String id) {
-        return Character.isLetter(id.charAt(0));
+        for (int i = 0; i < id.length(); i++) {
+            if (!Character.isLowerCase(id.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
