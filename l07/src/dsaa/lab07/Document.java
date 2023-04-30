@@ -273,6 +273,7 @@ public class Document implements IWithName {
 
     @Override
     public int hashCode() {
+        // mod value to avoid overflow
         int MODVALUE = 100000000;
         int[] numbers = {7,11,13,17,19};
         int numbersLength = numbers.length;
