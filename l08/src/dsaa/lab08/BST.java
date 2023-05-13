@@ -57,6 +57,7 @@ public class BST<T> {
 				}
 				return null;
 			}
+
 			if (relation < 0) {
 				if (currentNode.left != null) {
 					currentNode = currentNode.left;
@@ -228,4 +229,20 @@ public class BST<T> {
 		return sizeHelper(node.left) + sizeHelper(node.right) + 1;
 	}
 
+	public int numberOfLeaves() {
+		Node node = root;
+		return numberOfLeavesHelper(node);
+	}
+	private int numberOfLeavesHelper(Node node){
+		// if node is null, return 0
+		if (node == null) {
+			return 0;
+		}
+		// if node is leaf, return 1
+		if (node.left == null && node.right == null) {
+			return 1;
+		}
+		// if node is not leaf, return sum of left and right
+		return numberOfLeavesHelper(node.left) + numberOfLeavesHelper(node.right);
+	}
 }

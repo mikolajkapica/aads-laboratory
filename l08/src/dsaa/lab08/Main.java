@@ -8,12 +8,7 @@ import java.util.*;
 public class Main {
 
 
-
-
 	static Scanner scan; // for input stream
-
-
-
 
 
 	public static void main(String[] args) {
@@ -42,8 +37,7 @@ public class Main {
 					currentDoc=new Document(word[1],scan);
 					if(!hashTable.add(currentDoc))
 						System.out.println("error");
-				}
-				else
+				} else
 					System.out.println("incorrect ID");
 				continue;
 			}
@@ -100,8 +94,7 @@ public class Main {
 						System.out.println("error");
 					else
 						System.out.println(currentDoc.link.add(link));
-				}
-				else
+				} else
 					System.out.println("no current document");
 				continue;
 			}
@@ -111,12 +104,10 @@ public class Main {
 					Link l=currentDoc.link.getElement(new Link(word[1]));
 					if(l!=null) {
 						System.out.println(l);
-					}
-					else {
+					} else {
 						System.out.println("error");
 					}
-				}
-				else
+				} else
 					System.out.println("no current document");
 				continue;
 			}
@@ -126,12 +117,10 @@ public class Main {
 					Link l=currentDoc.link.successor(new Link(word[1]));
 					if(l!=null) {
 						System.out.println(l);
-					}
-					else {
+					} else {
 						System.out.println("error");
 					}
-				}
-				else
+				} else
 					System.out.println("no current document");
 
 				continue;
@@ -142,12 +131,10 @@ public class Main {
 					Link l=currentDoc.link.remove(new Link(word[1]));
 					if(l!=null) {
 						System.out.println(l);
-					}
-					else {
+					} else {
 						System.out.println("error");
 					}
-				}
-				else
+				} else
 					System.out.println("no current document");
 
 				continue;
@@ -158,6 +145,15 @@ public class Main {
 				continue;
 			}
 
+			if(word[0].equalsIgnoreCase("nl") && word.length==1) {
+				if(currentDoc!=null) {
+					System.out.println(currentDoc.link.numberOfLeaves());
+
+				} else
+					System.out.println("no current document");
+
+				continue;
+			}
 			System.out.println("Wrong command");
 		}
 		System.out.println("END OF EXECUTION");

@@ -15,11 +15,13 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E> {
         public Element(E e) {
             this.object = e;
         }
+
         public Element(E e, Element next, Element prev) {
             this.object = e;
             this.next = next;
             this.prev = prev;
         }
+
         // add element e after this
         public void addAfter(Element elem) {
             this.next.prev = elem;
