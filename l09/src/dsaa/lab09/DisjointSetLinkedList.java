@@ -65,8 +65,6 @@ public class DisjointSetLinkedList implements DisjointSetDataStructure {
 
 		// zaktualizowac tail heada pierwszego
 		arr[repA].last = arr[repB].last;
-		// usunac tail reprezentata drugiego
-		arr[repB].last = NULL;
 		return true;
 	}
 
