@@ -1,21 +1,14 @@
 package dsaa.lab10;
 
-import javax.print.Doc;
+
 import java.util.*;
 
 public class Graph {
 	int arr[][];
-	//TODO? Collection to map Document to index of vertex
-	// You can change it
 	HashMap<String, Integer> doc2Int;
-
-	//	@SuppressWarnings("unchecked")
-	//TODO? Collection to map index of vertex to Document
-	// You can change it
 	Map.Entry<String, Document>[] arrDoc;
 
-	// The argument type depend on a selected collection in the Main class
-	public Graph(SortedMap<String,Document> internet){
+	public Graph(SortedMap<String, Document> internet) {
 		int size=internet.size();
 		arr=new int[size][size];
 		doc2Int = new HashMap<>();
@@ -52,77 +45,65 @@ public class Graph {
 			for (Link link : document.link.values()) {
 				if (internet.containsKey(link.ref)) {
 					arr[doc2Int.get(document.name)][doc2Int.get(link.ref)] = link.weight;
-					arr[doc2Int.get(link.ref)][doc2Int.get(document.name)] = link.weight;
 				}
 			}
 		}
+//		 print arr
+//		for (int i = 0; i < arr.length; i++) {
+//			for (int j = 0; j < arr[i].length; j++) {
+//				System.out.print(arr[i][j] + " ");
+//			}
+//			System.out.print('\n');
+//		}
 	}
 
 	public String bfs(String start) {
+		if (!doc2Int.containsKey(start))
+			return null;
+
+		Queue<Integer> queue = new LinkedList<>();
+		Set<Integer> explored = new HashSet<>();
 		StringBuilder sb = new StringBuilder();
-		Queue<Document> queue = new LinkedList<>();
-		ArrayList<Document> explored = new ArrayList<>();
 
-		// start
-		Map.Entry<String, Document> startDocumentEntry = arrDoc[doc2Int.get(start)];
+		queue.offer(doc2Int.get(start));
+		explored.add(doc2Int.get(start));
 
-		// check if there is a vertex with start name
-		if (startDocumentEntry == null) {
-			return "";
-		}
+		while (!queue.isEmpty()) {
+			int current = queue.poll();
+			explored.add(current);
+			sb.append(arrDoc[current].getKey()).append(", ");
 
-		// make and enqueue the document
-		Document startDocument = startDocumentEntry.getValue();
-		queue.offer(startDocument);
-
-		do {
-			Document currentDocument = queue.poll();
-			sb.append(currentDocument.name).append(", ");
-			explored.add(currentDocument);
-			currentDocument.link.forEach((name, link) -> {
-				Map.Entry<String, Document> neighbouringDocumentEntry = arrDoc[doc2Int.get(name)];
-
-				// Check if there is a vertex for the linked neighbour
-				if (neighbouringDocumentEntry == null) {
-					return;
-				}
-
-				Document neighbouringDocument = neighbouringDocumentEntry.getValue();
-				if (!explored.contains(neighbouringDocument)) {
-					queue.offer(neighbouringDocument);
+			arrDoc[current].getValue().link.values().forEach(link -> {
+				if (!explored.contains(doc2Int.get(link.ref))) {
+					queue.offer(doc2Int.get(link.ref));
+					explored.add(doc2Int.get(link.ref));
 				}
 			});
-		} while (!queue.isEmpty());
 
+		}
 		return sb.substring(0, sb.length() - 2);
 	}
 
 	public String dfs(String start) {
+		if (!doc2Int.containsKey(start))
+			return null;
+
+		Set<Integer> explored = new HashSet<>();
 		StringBuilder sb = new StringBuilder();
-		ArrayList<Document> explored = new ArrayList<>();
-		Map.Entry<String, Document> startDocumentEntry = arrDoc[doc2Int.get(start)];
-		// check if there is a vertex with start name
-		if (startDocumentEntry == null) {
-			return "";
-		}
-		Document startDocument = startDocumentEntry.getValue();
-		dfsHelper(startDocument, sb, explored);
-		return sb.substring(0, sb.length()-2);
+
+		dfsHelper(doc2Int.get(start), explored, sb);
+		return sb.substring(0, sb.length() - 2);
 	}
 
-	public void dfsHelper(Document document, StringBuilder sb, ArrayList<Document> explored) {
-		sb.append(document.name).append(", ");
-		explored.add(document);
-		document.link.forEach((name, link) -> {
-			Map.Entry<String, Document> deeperDocumentEntry = arrDoc[doc2Int.get(name)];
-			// Check if there is a vertex for the linked neighbour
-			if (deeperDocumentEntry == null) {
-				return;
-			}
+	private void dfsHelper(int start, Set<Integer> explored, StringBuilder sb) {
+		if (explored.contains(start))
+			return;
 
-			Document deeperDocument = deeperDocumentEntry.getValue();
-			if (!explored.contains(deeperDocument)) {
-				dfsHelper(deeperDocument, sb, explored);
+		explored.add(start);
+		sb.append(arrDoc[start].getKey()).append(", ");
+		arrDoc[start].getValue().link.values().forEach(link -> {
+			if (!explored.contains(doc2Int.get(link.ref))) {
+				dfsHelper(doc2Int.get(link.ref), explored, sb);
 			}
 		});
 	}
@@ -146,3 +127,4 @@ public class Graph {
 		return disjointSetForest.countSets();
 	}
 }
+
