@@ -1,9 +1,5 @@
-package dsaa.lab10;
+package lab11;
 import java.util.*;
-
-
-
-
 
 public class Main {
 
@@ -23,9 +19,9 @@ public class Main {
 			// copy line to output (it is easier to find a place of a mistake)
 			System.out.println("!"+line);
 			String word[]=line.split(" ");
-			//getdoc name - change document to name 
+			//getdoc name - change document to name
 			if(word[0].equalsIgnoreCase("getdoc") && word.length==2) {
-				currentDoc=(Document)sortedMap.get(word[1]);				
+				currentDoc=(Document)sortedMap.get(word[1]);
 				continue;
 			}
 
@@ -60,7 +56,7 @@ public class Main {
 				else
 					System.out.println("no current document");
 				continue;
-			}			
+			}
 			// size
 			if(word[0].equalsIgnoreCase("size") && word.length==1) {
 				if(currentDoc!=null)
@@ -68,7 +64,7 @@ public class Main {
 				else
 					System.out.println("no current document");
 				continue;
-			}			
+			}
 			// add str
 			if(word[0].equalsIgnoreCase("add") && word.length==2) {
 				if(currentDoc!=null) {
@@ -82,8 +78,8 @@ public class Main {
 				}
 				else
 					System.out.println("no current document");
-				continue;				
-			}		
+				continue;
+			}
 			// get str
 			if(word[0].equalsIgnoreCase("get") && word.length==2) {
 				if(currentDoc!=null) {
@@ -96,9 +92,9 @@ public class Main {
 					}
 				}
 				else
-					System.out.println("no current document");					
+					System.out.println("no current document");
 				continue;
-			}					
+			}
 			// rem str
 			if(word[0].equalsIgnoreCase("rem") && word.length==2) {
 				if(currentDoc!=null) {
@@ -112,43 +108,61 @@ public class Main {
 					}
 				}
 				else
-					System.out.println("no current document");					
+					System.out.println("no current document");
 
 				continue;
-			}	
+			}
 
 			// bfs str
 			if(word[0].equalsIgnoreCase("bfs") && word.length==2) {
 				Graph graph=new Graph(sortedMap);
 				String str=graph.bfs(word[1]);
-					if(str!=null) {
-						System.out.println(str);
-					}
-					else {
-						System.out.println("error");
-					}
+				if(str!=null) {
+					System.out.println(str);
+				}
+				else {
+					System.out.println("error");
+				}
 				continue;
-			}	
+			}
 			// dfs str
 			if(word[0].equalsIgnoreCase("dfs") && word.length==2) {
 				Graph graph=new Graph(sortedMap);
 				String str=graph.dfs(word[1]);
-					if(str!=null) {
-						System.out.println(str);
-					}
-					else {
-						System.out.println("error");
-					}
+				if(str!=null) {
+					System.out.println(str);
+				}
+				else {
+					System.out.println("error");
+				}
 				continue;
-			}	
-			// cc 
+			}
+			// cc
 			if(word[0].equalsIgnoreCase("cc") && word.length==1) {
 				Graph graph=new Graph(sortedMap);
 				int str=graph.connectedComponents();
 				System.out.println(str);
 				continue;
-			}	
-			System.out.println("Wrong command");			
+			}
+			// graph
+			if(word[0].equalsIgnoreCase("graph") && word.length==1) {
+				Graph graph=new Graph(sortedMap);
+				System.out.println(graph);
+				continue;
+			}
+			// sssp str
+			if(word[0].equalsIgnoreCase("sssp") && word.length==2) {
+				Graph graph=new Graph(sortedMap);
+				String str=graph.DijkstraSSSP(word[1]);
+				if(str!=null) {
+					System.out.print(str);
+				}
+				else {
+					System.out.println("error");
+				}
+				continue;
+			}
+			System.out.println("Wrong command");
 		}
 		System.out.println("END OF EXECUTION");
 		scan.close();

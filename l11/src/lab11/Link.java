@@ -1,4 +1,4 @@
-package dsaa.lab10;
+package lab11;
 
 public class Link implements Comparable<Link>{
 	public String ref;

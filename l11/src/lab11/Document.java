@@ -1,7 +1,8 @@
-package dsaa.lab10;
+package lab11;
 
 import java.util.Scanner;
-import java.util.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 public class Document implements IWithName{

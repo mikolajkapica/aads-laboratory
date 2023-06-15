@@ -1,4 +1,4 @@
-package dsaa.lab10;
+package lab11;
 
 public interface IWithName{
 	String getName();
