@@ -2,16 +2,17 @@ package dsaa.lab12;
 
 import java.util.LinkedList;
 
+import static dsaa.lab12.KMP.computePrefixFunction;
+
 public class Automaton implements IStringMatcher {
 
 	@Override
 	public LinkedList<Integer> validShifts(String pattern, String text) {
 		if (pattern.length() == 0 || text.length() == 0) {
 			return new LinkedList<>();
-		} 
+		}
 
-
-		// alphabet range
+		// Alphabet ascii range [lowestCode, biggerCode]
 		String patternAndText = pattern + text;
 		int biggerCode = 0;
 		int lowestCode = 256;
@@ -25,50 +26,49 @@ public class Automaton implements IStringMatcher {
 		}
 		int alphabetRange = biggerCode - lowestCode + 1;
 
-		// build automaton
 
+		// Automaton
 		int[][] automaton = new int[pattern.length() + 1][alphabetRange];
-		// int[] prefixFunction = new int[pattern.length()]; // prefix function
-		//
-		// // Compute the prefix function
-		// prefixFunction[0] = 0;
-		// for (int i = 1; i < pattern.length(); i++) {
-		// 	int j = prefixFunction[i - 1];
-		// 	while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
-		// 		j = prefixFunction[j - 1];
-		// 	}
-		// 	if (pattern.charAt(i) == pattern.charAt(j)) {
-		// 		j++;
-		// 	}
-		// 	prefixFunction[i] = j;
-		// }
-		//
-		// // print prefix function
-		// for (int i = 0; i < prefixFunction.length; i++) {
-		// 	System.out.print(prefixFunction[i] + " ");
-		// }
-		// System.out.println();
-		//
-		// // Build the automaton using the prefix function
-		// for (int state = 0; state <= pattern.length(); state++) {
-		// 	for (int c = 0; c < alphabetRange; c++) {
-		// 		if (state > 0 && pattern.charAt(state) != (char)(c + lowestCode)) {
-		// 			automaton[state][c] = automaton[prefixFunction[state - 1]][c];
-		// 		} else {
-		// 			automaton[state][c] = state + 1;
-		// 		}
-		// 	}
-		// }
 
+		/* O(m^3 * |alphabet|) Solution
 		for (int state = 0; state <= pattern.length(); state++) {
-			for (int c = 0; c < alphabetRange; c++) {
-				int nextState = Math.min(pattern.length() + 1, state + 2);
+			for (int c = 0; c < alphabetrange; c++) {
+				int nextstate = math.min(pattern.length() + 1, state + 2);
 				do {
-					nextState--;
-				} while (!isSuffix(pattern.substring(0, nextState), pattern.substring(0, state) + (char) (c + lowestCode)));
-				automaton[state][c] = nextState;
+					nextstate--;
+					// if the pattern is a suffix of the pattern + character
+				} while (!(pattern.substring(0, nextstate).endswith(pattern.substring(0, state) + (char) (c + lowestcode))));
+				automaton[state][c] = nextstate;
 			}
 		}
+		*/
+
+		// Using a prefixFunction concept from KMP
+		// we can achieve time complexity of O(m * |alphabet|)
+
+		// Theta(m) time complexity, O(m) <= Theta(m)
+		int[] prefixArray = computePrefixFunction(pattern);
+
+		// O(m * |alphabet|)
+		// automata starts in state 0 for all characters
+		for (int state = 0; state <= pattern.length(); state++) {
+			for (int c = 0; c < alphabetRange; c++) {
+				// if T[c] is different from P[state]
+				if (state == pattern.length() || pattern.charAt(state) != (char)(c + lowestCode)) {
+					if (state == 0) {
+						automaton[state][c] = 0;
+					} else {
+						// go to the state with the longest prefix that is also a suffix of P[0..state-1]c
+						automaton[state][c] = automaton[prefixArray[state - 1]][c];
+					}
+				} else {
+					// If next character matches the pattern, go to the next state
+					automaton[state][c] = state + 1;
+				}
+			}
+		}
+		// O(m) + O(m * |alphabet|) + O(m * |alphabet|) = O(m * |alphabet|)
+
 
 		// search
 		LinkedList<Integer> result = new LinkedList<>();
@@ -80,10 +80,6 @@ public class Automaton implements IStringMatcher {
 			}
 		}
 		return result;
-	}
-
-	boolean isSuffix(String suffix, String word) {
-		return word.endsWith(suffix);
 	}
 
 }

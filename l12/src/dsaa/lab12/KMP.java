@@ -11,35 +11,39 @@ public class KMP implements IStringMatcher {
 		}
 
 		// calculate prefix function
-		int[] prefixFunction = new int[pattern.length()];
-		prefixFunction[0] = 0;
-		for (int i = 1; i < pattern.length(); i++) {
-			int j = prefixFunction[i - 1];
-			while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
-				j = prefixFunction[j - 1];
-			}
-			if (pattern.charAt(i) == pattern.charAt(j)) {
-				j++;
-			}
-			prefixFunction[i] = j;
-		}
+		int[] prefixFunction = computePrefixFunction(pattern);
 
 		// search
 		LinkedList<Integer> result = new LinkedList<Integer>();
-		int j = 0;
+		int q = 0;
 		for (int i = 0; i < text.length(); i++) {
-			while (j > 0 && text.charAt(i) != pattern.charAt(j)) {
-				j = prefixFunction[j - 1];
+			while (q > 0 && pattern.charAt(q) != text.charAt(i)) {
+				q = prefixFunction[q - 1];
 			}
-			if (text.charAt(i) == pattern.charAt(j)) {
-				j++;
+			if (pattern.charAt(q) == text.charAt(i)) {
+				q += 1;
 			}
-			if (j == pattern.length()) {
+			if (q == pattern.length()) {
 				result.add(i - pattern.length() + 1);
-				j = prefixFunction[j - 1];
+				q = prefixFunction[q - 1];
 			}
 		}
 		return result;
 	}
 
+	static int[] computePrefixFunction(String pattern) {
+		int[] pi = new int[pattern.length()];
+		pi[0] = 0;
+		int k = 0;
+		for (int q = 1; q < pattern.length(); q++) {
+			while (k > 0 && pattern.charAt(k) != pattern.charAt(q)) {
+				k = pi[k - 1];
+			}
+			if (pattern.charAt(k) == pattern.charAt(q)) {
+				k += 1;
+			}
+			pi[q] = k;
+		}
+		return pi;
+	}
 }
